@@ -117,28 +117,29 @@ For any agent that supports the [Agent Skills standard](https://agentskills.io/s
 <!-- BEGIN_SKILLS_TABLE -->
 | Category | Sub-category | Skill | Description |
 |----------|-------------|-------|-------------|
-| **Inference & Serving** | Model Migration | [`model-migrate-flagos`](skills/model-migrate-flagos/) | Migrate a model from upstream vLLM into vllm-plugin-FL (pinned at v0.13.0). Automates the full 13-step copy-then-patch workflow with E2E verification. |
-| | Serving Deployment | [PR #6 `flagrelease`](https://github.com/flagos-ai/skills/pull/6) | Deploy and configure vLLM-FL / SGLang-FL serving instances across multi-chip environments. |
-| | Preflight Check | *Planned* | Verify GPU/accelerator availability, driver versions, Python env, and chip compatibility before running inference. |
-| **Training & RLHF** | Training Migration | *Planned* | Adapt training scripts for FlagScale / Megatron-LM-FL across different AI chips. |
-| | RLHF Pipeline | *Planned* | Set up and debug verl-FL reinforcement learning workflows. |
-| **Operator & Compiler** | TLE Primitive Dev | [PR #2 `tle-developer`](https://github.com/flagos-ai/skills/pull/2) | Develop TLE (Triton Language Extensions) primitives and build operators using TLE-Lite / TLE-Struct / TLE-Raw across FlagTree backends. |
-| | Operator Optimization | *Planned* | Guided iterative performance tuning for existing FlagGems / FlagAttention operators — profiling, bottleneck analysis, and optimization suggestions. |
-| | Kernel Generation | [PR #10 `kernelgen`](https://github.com/flagos-ai/skills/pull/10) | General-purpose GPU kernel generation via KernelGen MCP for any Python/Triton project, covering multi-chip targets (NVIDIA, Ascend, Cambricon, Moore Threads, Iluvatar, etc.). |
-| | Kernel Gen for FlagGems | [PR #10 `kernelgen-for-flaggems`](https://github.com/flagos-ai/skills/pull/10) | FlagGems-specific kernel generation with promotion rules, `pointwise_dynamic` wrappers, and `_FULL_CONFIG` registration. |
-| | Kernel Gen for vLLM | [PR #10 `kernelgen-for-vllm`](https://github.com/flagos-ai/skills/pull/10) | vLLM-specific kernel generation with SPDX headers, `vllm.logger`, `@triton.autotune`, and custom op registration. |
-| | KernelGen Feedback | [PR #10 `kernelgen-submit-feedback`](https://github.com/flagos-ai/skills/pull/10) | Submit bug reports and improvement suggestions for KernelGen as structured GitHub issues. |
+| **Deployment & Release** | Release Pipeline | [PR #6 `flagrelease-entrance-flagos`](https://github.com/flagos-ai/skills/pull/6) | Orchestrate the end-to-end release pipeline: stack installation → environment verification → model verification → performance testing, producing a structured release report. |
+| | Stack Installation | [PR #6 `install-stack-flagos`](https://github.com/flagos-ai/skills/pull/6) | Install the FlagOS software stack inside a GPU container in order (vLLM → FlagTree → FlagGems → FlagCX → vllm-plugin-FL) with mainland China mirror detection and per-package gate validation. |
+| | Base Image Selection | [PR #5 `gpu-container-setup-flagos`](https://github.com/flagos-ai/skills/pull/5) | Auto-detect GPU vendor and find the optimal PyTorch base Docker image by priority (vendor hub → BAAI Harbor → web search → local images), with GPU availability verification. |
+| | Model Migration | [`model-migrate-flagos`](skills/model-migrate-flagos/) | Migrate a model from upstream vLLM into vllm-plugin-FL. Automates the full 13-step copy-then-patch workflow with E2E verification. |
+| **Benchmarking & Eval** | Deployment A/B Verification | [PR #6 `model-verify-flagos`](https://github.com/flagos-ai/skills/pull/6) | Dual-run comparison: Run A (native CUDA) vs Run B (FlagGems + FlagCX), diff analysis with per-component error attribution, outputting `recommended_stack` (full/base/none). |
+| | Accuracy & Performance Test | [PR #6 `perf-test-flagos`](https://github.com/flagos-ai/skills/pull/6) | Two-part testing: Part A runs FlagEval accuracy benchmarks (currently placeholder), Part B runs `vllm bench serve` across 5 workload profiles collecting throughput, latency, TTFT, and TPOT metrics. |
+| | Post-Deploy Auto Eval | *Planned* | Automatically trigger evaluation after model deployment, track evaluation status, report errors on failure, and push notifications with results upon completion. |
+| | FlagPerf Case Creation | *Planned* | Generate FlagPerf-compliant directory structures, config files, run scripts, and expected metric baselines for new model/chip benchmark cases. |
+| **Kernel & Operator Development** | TLE Lifecycle Dev | [PR #2 `tle-developer-flagos`](https://github.com/flagos-ai/skills/pull/2) | Full TLE (Triton Language Extensions) lifecycle: intake → kernel writing → API/verifier/lowering development → debugging → validation → artifact generation → merge decision. |
+| | Kernel Generation | [`kernelgen-flagos`](skills/kernelgen-flagos/) | MCP-driven 9-step kernel generation workflow: requirement parsing → kernel writing → correctness verification → performance tuning → multi-chip adaptation. |
+| | Kernel Gen for FlagGems | [`kernelgen-flagos`](skills/kernelgen-flagos/kernelgen-for-flaggems.md) | FlagGems-specific kernel generation with `@pointwise_dynamic` wrapper rewriting, `_FULL_CONFIG` registration, and operator signature alignment. |
+| | Kernel Gen for vLLM | [`kernelgen-flagos`](skills/kernelgen-flagos/kernelgen-for-vllm.md) | vLLM-specific kernel generation with SPDX headers, `@triton.autotune`, custom op registration, and dispatch integration. |
+| | Experimental Op Promotion | *Planned* | Scan FlagGems ~130 experimental ops, check test coverage, align signatures, complete `_FULL_CONFIG` registration, and generate migration PRs to promote them to main ops. |
+| | Complex Operator Dev | *Planned* | Generate skeleton code for multi-step fused operators (fused attention, fused MoE, etc.), handling shared memory tiling strategies and multi-backend branching. |
 | | Operator Diagnosis | *Planned* | Diagnose abnormal operators in the FlagOS stack — identify precision errors, performance regressions, and backend-specific failures across chips. |
-| | Compiler Backend Adaptation | *Planned* | Port and debug FlagTree / Triton compiler backends for new AI chip architectures. |
-| **Communication** | Collective Ops | *Planned* | Adapt and benchmark FlagCX cross-chip communication primitives (AllReduce, AllGather, Send/Recv, etc.) across 11+ backends (NCCL, IXCCL, CNCL, MCCL, etc.). |
-| **Benchmarking & Eval** | Performance Benchmark | [PR #6 `perf-test`](https://github.com/flagos-ai/skills/pull/6) | Run and analyze FlagPerf benchmarks; generate multi-dimensional comparison reports (throughput, memory, scaling) across chips. |
-| | E2E Accuracy Eval | [PR #6 `model-verify`](https://github.com/flagos-ai/skills/pull/6) | Token-level accuracy verification between different serving backends or chip targets. |
-| **Environment & Deployment** | Stack Installation | [PR #6 `install-stack`](https://github.com/flagos-ai/skills/pull/6) | One-click FlagOS software stack installation on a target chip — auto-detect hardware, resolve dependencies, and configure the full toolchain (FlagTree + FlagGems + vLLM-FL + FlagCX). |
-| | Base Image Selection | [PR #5 `gpu-container-setup`](https://github.com/flagos-ai/skills/pull/5) | Find and recommend the optimal base Docker image for domestic AI chip model deployment — matching chip type, driver version, CUDA/SDK compatibility, and framework requirements. |
-| | Container Build | *Planned* | Build and publish multi-chip Docker images with correct driver/library dependencies. |
-| | CI Pipeline | *Planned* | Configure and debug FlagOps CI/CD pipelines for multi-chip build matrices. |
-| **Developer Tooling** | Skill Development | [`skill-creator-flagos`](skills/skill-creator-flagos/) | Create, improve, and validate skills for this repository. Scaffolding, conventions check, and test case evaluation. |
-| | Chip Onboarding | *Planned* | Guide new chip vendors through the FlagOS adaptation process end-to-end. |
+| **Multi-Chip Backend Onboarding** | vLLM Vendor Backend | *Planned* | Scaffold a new vllm-plugin-FL vendor backend from the template: generate vendor directory, `Backend` subclass, `is_available` detection, `register_ops` framework, and test skeleton. |
+| | Dispatch Op Extension | *Planned* | Query dispatchable ops from `base.py`, generate impl template files, add `OpImpl` registration to `register_ops.py`, and create unit test skeletons. |
+| | FlagGems Chip Backend | *Planned* | Generate the full `_vendor/` scaffold: `__init__.py` (VendorInfoBase config) + `heuristics_config_utils.py` + `tune_configs.yaml` + `ops/` directory following the FlagGems backend contribution guide. |
+| | FlagCX Comm Backend | *Planned* | Parse 20+ device and 15+ CCL function pointer signatures from header files, generate all stub implementations with trivial function fills, plus CMake build configuration. |
+| | Heterogeneous Training Config | *Planned* | Generate valid FlagScale heterogeneous training configs from hardware topology descriptions, auto-compute `hetero_process_meshes` / `hetero_pipeline_layer_split`, and validate constraints (TP×DP×PP = device count). |
+| **Developer Tooling** | Skill Development | [`skill-creator-flagos`](skills/skill-creator-flagos/) | Four modes (Create / Improve / Validate / Eval) for managing SKILL.md lifecycle — scaffolding, conventions check, and quality evaluation. |
+| | Feedback Submission | [`kernelgen-flagos`](skills/kernelgen-flagos/kernelgen-submit-feedback.md) | Auto-collect environment info, construct structured GitHub issues, and submit to flagos-ai/skills with email fallback when GitHub CLI is unavailable. |
+| | Local Dev Environment | *Planned* | Set up local development and debugging environments for FlagOS modules (FlagGems / FlagTree / FlagCX / etc.) — configure dependencies, environment variables, and debug toolchains. |
 <!-- END_SKILLS_TABLE -->
 
 ### Using skills in your agent
