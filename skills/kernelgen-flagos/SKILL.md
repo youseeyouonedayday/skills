@@ -124,7 +124,7 @@ Then use the Read tool to read the matched path.
 5. If the user explicitly requests a specific sub-skill (e.g., "use the FlagGems version"),
    honor that request regardless of auto-detection results.
 6. **CRITICAL — MCP is mandatory**: ALL operator code generation MUST go through the
-   `mcp__kernelgen-mcp__generate_operator` MCP tool. NEVER generate Triton kernels, PyTorch
+   `mcp__kernelgen-mcp__generate_kernel` MCP tool. NEVER generate Triton kernels, PyTorch
    wrappers, or operator implementations yourself. If MCP is not configured, not reachable,
    or fails after all retries, STOP and report the issue — do NOT fall back to writing code
    manually.

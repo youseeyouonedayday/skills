@@ -25,7 +25,7 @@ Follow these rules strictly to avoid getting lost in the multi-step workflow:
    Glob or Grep tools, report it to the user instead of guessing. Do not assume a file exists
    at a path without verifying it first.
 8. **CRITICAL — MCP is mandatory**: ALL operator code generation MUST go through the
-   `mcp__kernelgen-mcp__generate_operator` MCP tool. NEVER generate Triton kernels, PyTorch
+   `mcp__kernelgen-mcp__generate_kernel` MCP tool. NEVER generate Triton kernels, PyTorch
    wrappers, or operator implementations yourself — even if the operator seems simple (e.g.,
    relu, abs). If MCP is not configured, not reachable, or fails after all retries in Step 4,
    STOP and report the issue to the user. Do NOT fall back to writing kernel code manually.
@@ -341,7 +341,7 @@ flagos_wiki = [
 
 ## Step 4: Call kernelgen-mcp
 
-Invoke `mcp__kernelgen-mcp__generate_operator` with the parameters gathered above:
+Invoke `mcp__kernelgen-mcp__generate_kernel` with the parameters gathered above:
 
 ```
 kernel_name:  "<kernel_name>"
@@ -926,8 +926,8 @@ to Step 6b. Do NOT attempt to fix algorithm logic yourself, as this typically le
 an endless fix-retry loop without converging. The MCP service has better optimization
 capabilities for these issues.
 
-**Step 6b. MCP re-generation — pass error context to generate_operator:**
-Re-call `mcp__kernelgen-mcp__generate_operator` with the **same parameters as Step 4**,
+**Step 6b. MCP re-generation — pass error context to generate_kernel:**
+Re-call `mcp__kernelgen-mcp__generate_kernel` with the **same parameters as Step 4**,
 but add the error information to `flagos_wiki` as additional hints:
 ```python
 flagos_wiki = [
@@ -941,8 +941,8 @@ Replace the kernel code with the new MCP output, re-run tests.
 - If tests **pass** → proceed to Step 7.
 - If tests **still fail** → proceed to Step 6c.
 
-**Step 6c. MCP optimization — pass error context to optimize_triton:**
-Try `mcp__kernelgen-mcp__optimize_triton` with the current kernel code and the
+**Step 6c. MCP optimization — pass error context to optimize_kernel:**
+Try `mcp__kernelgen-mcp__optimize_kernel` with the current kernel code and the
 `check_result` parameter containing the error traceback. This endpoint can fix
 memory access patterns, index calculations, and numerical issues.
 Replace the kernel code with the optimized output, re-run tests.
@@ -1159,7 +1159,7 @@ creation with the prepared description.
   no single torch equivalent function.
 - **Match the existing code patterns** when adding to existing files (e.g., `_custom_ops.py`, layer files).
 - If accuracy tests fail, try to fix the operator. If benchmark is slow, consider calling
-  `mcp__kernelgen-mcp__optimize_triton` to optimize the kernel.
+  `mcp__kernelgen-mcp__optimize_kernel` to optimize the kernel.
 - When creating a custom variant, always make it clear that it does NOT override existing ops
   to avoid conflicts.
 - **Always use `@torch.inference_mode()`** in tests for consistency with the codebase.

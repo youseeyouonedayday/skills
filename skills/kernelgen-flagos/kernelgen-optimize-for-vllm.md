@@ -388,7 +388,7 @@ Output initial baseline summary:
 
 **Step 2.4: Tests Fail → Call MCP to Fix**
 
-Call `mcp__kernelgen-mcp__optimize_triton` with `check_result` to fix:
+Call `mcp__kernelgen-mcp__optimize_kernel` with `check_result` to fix:
 ```
 Parameters:
 - kernel_name: Operator name
@@ -477,7 +477,7 @@ Bottleneck: {bottleneck}
 **Step 3.5: Call MCP to Get Optimized Code**
 
 ```
-Use MCP tool: mcp__kernelgen-mcp__optimize_triton
+Use MCP tool: mcp__kernelgen-mcp__optimize_kernel
 
 Parameters:
 - kernel_name: Operator name
@@ -833,7 +833,7 @@ Verify Commands:
 
 ## MCP Tool Reference
 
-### mcp__kernelgen-mcp__optimize_triton
+### mcp__kernelgen-mcp__optimize_kernel
 
 Optimize Triton kernel code. Can be used for performance optimization or error fixing.
 

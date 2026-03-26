@@ -12,7 +12,7 @@ placing code.
 - **Write / Edit**: create or modify files
 - **Grep**: search file contents
 - **Glob**: find files by pattern
-- **MCP tools**: `mcp__kernelgen-mcp__generate_operator` and `mcp__kernelgen-mcp__optimize_triton`
+- **MCP tools**: `mcp__kernelgen-mcp__generate_kernel` and `mcp__kernelgen-mcp__optimize_kernel`
 
 > **⚠️ MCP Prerequisite Check**: If the user has not configured the kernelgen MCP service (i.e., the MCP tools are unavailable or calls fail),
 > immediately prompt the user to visit https://kernelgen.flagos.io/ to register and obtain the kernelgen MCP service URL and JWT Token,
@@ -41,7 +41,7 @@ Follow these rules strictly to avoid getting lost in the multi-step workflow:
    the specific discovered source, test, or benchmark directories. Unscoped searches cause
    token explosion and match vendored code, docs, and build artifacts.
 10. **CRITICAL — MCP is mandatory**: ALL operator code generation MUST go through the
-    `mcp__kernelgen-mcp__generate_operator` MCP tool. NEVER generate Triton kernels, PyTorch
+    `mcp__kernelgen-mcp__generate_kernel` MCP tool. NEVER generate Triton kernels, PyTorch
     wrappers, or operator implementations yourself — even if the operator seems simple (e.g.,
     relu, abs). If MCP is not configured, not reachable, or fails after all retries in Step 5,
     STOP and report the issue to the user. Do NOT fall back to writing kernel code manually.
@@ -456,7 +456,7 @@ generation quality:
 
 ## Step 5: Call kernelgen-mcp
 
-Invoke `mcp__kernelgen-mcp__generate_operator` with the parameters gathered above:
+Invoke `mcp__kernelgen-mcp__generate_kernel` with the parameters gathered above:
 
 ```
 kernel_name:     "<kernel_name>"
@@ -888,8 +888,8 @@ to Step 7b. Do NOT attempt to fix algorithm logic yourself, as this typically le
 an endless fix-retry loop without converging. The MCP service has better optimization
 capabilities for these issues.
 
-**Step 7b. MCP re-generation — pass error context to generate_operator:**
-Re-call `mcp__kernelgen-mcp__generate_operator` with the **same parameters as Step 5**,
+**Step 7b. MCP re-generation — pass error context to generate_kernel:**
+Re-call `mcp__kernelgen-mcp__generate_kernel` with the **same parameters as Step 5**,
 but add the error information to `flagos_wiki` as additional hints:
 ```python
 flagos_wiki = [
@@ -903,8 +903,8 @@ Replace the kernel code with the new MCP output, re-run tests.
 - If tests **pass** → proceed to Step 8.
 - If tests **still fail** → proceed to Step 7c.
 
-**Step 7c. MCP optimization — pass error context to optimize_triton:**
-Try `mcp__kernelgen-mcp__optimize_triton` with the current kernel code and the
+**Step 7c. MCP optimization — pass error context to optimize_kernel:**
+Try `mcp__kernelgen-mcp__optimize_kernel` with the current kernel code and the
 `check_result` parameter containing the error traceback. This endpoint can fix
 memory access patterns, index calculations, and numerical issues.
 Replace the kernel code with the optimized output, re-run tests.
@@ -1192,7 +1192,7 @@ Detect the hosting platform from the remote URL:
   does not use autotune, do NOT introduce it — use a fixed BLOCK_SIZE matching the repo pattern.
 - **Follow alphabetical ordering** when adding entries to `__init__.py`, `__all__`, or config lists.
 - If accuracy tests fail, try to fix. If benchmark is slow, consider calling
-  `mcp__kernelgen-mcp__optimize_triton` to optimize.
+  `mcp__kernelgen-mcp__optimize_kernel` to optimize.
 - **Speedup formula**: `speedup = torch_latency / kernel_latency` (>1.0 means kernel is faster).
   If parsing fails, report raw output instead.
 - **Never modify unrelated files**. Keep the diff minimal and focused.

@@ -1,7 +1,7 @@
 
 # Triton Kernel Optimization Skill (MCP Version)
 
-Optimize Triton kernels using expert knowledge from MCP service. Uses the `optimize_triton` tool from the `kernelgen-mcp` MCP server.
+Optimize Triton kernels using expert knowledge from MCP service. Uses the `optimize_kernel` tool from the `kernelgen-mcp` MCP server.
 
 ## Prerequisites
 
@@ -269,10 +269,10 @@ Back up file to `$OUTPUT_DIR/iterations/triton_iter_0_safe.py`.
 
 **Step 2.3: Tests Fail → Call MCP to Fix**
 
-Call the `mcp__kernelgen-mcp__optimize_triton` tool with the `check_result` parameter to fix:
+Call the `mcp__kernelgen-mcp__optimize_kernel` tool with the `check_result` parameter to fix:
 
 ```
-Use MCP tool: mcp__kernelgen-mcp__optimize_triton
+Use MCP tool: mcp__kernelgen-mcp__optimize_kernel
 
 Parameters:
 - kernel_name: Operator name (extracted from filename or directory name)
@@ -391,7 +391,7 @@ Bottleneck: {bottleneck}
 Call MCP tool to get optimized code:
 
 ```
-Use MCP tool: mcp__kernelgen-mcp__optimize_triton
+Use MCP tool: mcp__kernelgen-mcp__optimize_kernel
 
 Parameters:
 - kernel_name: Operator name (required, extracted from filename or directory name, e.g., "relu", "softmax")
@@ -450,7 +450,7 @@ Handle results by branch:
 Do not roll back immediately! Try letting MCP fix it first:
 
 ```
-Use MCP tool: mcp__kernelgen-mcp__optimize_triton
+Use MCP tool: mcp__kernelgen-mcp__optimize_kernel
 
 Parameters:
 - kernel_name: Operator name
@@ -530,7 +530,7 @@ Output Directory: {OUTPUT_DIR}
 
 ## MCP Tool Reference
 
-### mcp__kernelgen-mcp__optimize_triton
+### mcp__kernelgen-mcp__optimize_kernel
 
 Optimize Triton kernel code. Can be used for performance optimization or error fixing.
 

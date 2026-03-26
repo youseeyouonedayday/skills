@@ -9,7 +9,7 @@ You are an expert at generating GPU kernel operators for the FlagGems project us
 - **Write / Edit**: create or modify files
 - **Grep**: search file contents
 - **Glob**: find files by pattern
-- **MCP tools**: `mcp__kernelgen-mcp__generate_operator` and `mcp__kernelgen-mcp__optimize_triton`
+- **MCP tools**: `mcp__kernelgen-mcp__generate_kernel` and `mcp__kernelgen-mcp__optimize_kernel`
 
 > **MCP Prerequisite Check**: If the user has not configured the kernelgen MCP service (i.e., MCP tools are unavailable or calls fail),
 > immediately prompt the user to visit https://kernelgen.flagos.io/ to register and obtain the kernelgen MCP service URL and JWT Token,
@@ -27,7 +27,7 @@ Always use the appropriate built-in tool rather than outputting commands for the
 5. **Report progress to the user when entering each step**.
 6. **Never fabricate repository files or paths**.
 7. **CRITICAL — MCP is mandatory**: ALL operator code generation MUST go through the
-   `mcp__kernelgen-mcp__generate_operator` MCP tool. NEVER generate Triton kernels, PyTorch
+   `mcp__kernelgen-mcp__generate_kernel` MCP tool. NEVER generate Triton kernels, PyTorch
    wrappers, or operator implementations yourself — even if the operator seems simple (e.g.,
    relu, abs). If MCP is not configured, not reachable, or fails after all retries in Step 4,
    STOP and report the issue to the user. Do NOT fall back to writing kernel code manually.
@@ -371,14 +371,14 @@ Before calling the MCP generator, use the Read tool to gather reference material
    - `"test pattern: @pytest.mark.xxx, POINTWISE_SHAPES, FLOAT_DTYPES, gems_assert_close"`
    - `"experimental test style: from flag_gems.experimental_ops.abs import abs as gems_abs, uses torch.ops.aten.abs for reference"`
 
-   If the `mcp__kernelgen-mcp__generate_operator` tool supports a `flagos_wiki` (or similarly named
+   If the `mcp__kernelgen-mcp__generate_kernel` tool supports a `flagos_wiki` (or similarly named
    `context`/`references`) parameter, pass the collected notes. If the MCP call fails with an
    error containing `unexpected argument`, `unknown field`, `invalid schema`, or similar, retry
    the call without the `flagos_wiki` field.
 
 ## Step 4: Call kernelgen-mcp
 
-Invoke `mcp__kernelgen-mcp__generate_operator` with the parameters gathered above, including the
+Invoke `mcp__kernelgen-mcp__generate_kernel` with the parameters gathered above, including the
 `flagos_wiki` list for reference context.
 
 If `<placement>` is `backend` and target device is not nvidia, pass the `device` parameter to the
@@ -931,8 +931,8 @@ to Step 6b. Do NOT attempt to fix algorithm logic yourself, as this typically le
 an endless fix-retry loop without converging. The MCP service has better optimization
 capabilities for these issues.
 
-**Step 6b. MCP re-generation — pass error context to generate_operator:**
-Re-call `mcp__kernelgen-mcp__generate_operator` with the **same parameters as Step 4**,
+**Step 6b. MCP re-generation — pass error context to generate_kernel:**
+Re-call `mcp__kernelgen-mcp__generate_kernel` with the **same parameters as Step 4**,
 but add the error information to `flagos_wiki` as additional hints.
 **Increment**: `iteration_count += 1`.
 Keep `flagos_wiki` concise — maximum 10 items total. If retrying multiple times, replace
@@ -941,8 +941,8 @@ Replace the kernel code with the new MCP output, re-run tests.
 - If tests **pass** → proceed to Step 7.
 - If tests **still fail** → proceed to Step 6c.
 
-**Step 6c. MCP optimization — pass error context to optimize_triton:**
-Try `mcp__kernelgen-mcp__optimize_triton` with the current kernel code and the
+**Step 6c. MCP optimization — pass error context to optimize_kernel:**
+Try `mcp__kernelgen-mcp__optimize_kernel` with the current kernel code and the
 `check_result` parameter containing the error traceback.
 **Increment**: `iteration_count += 1`.
 Replace the kernel code with the optimized output, re-run tests.

@@ -361,7 +361,7 @@ Target speedup: {target_speedup}x
 **Step 3A.4: Call MCP to Get Optimized Code**
 
 ```
-MCP tool: mcp__kernelgen-mcp__optimize_triton
+MCP tool: mcp__kernelgen-mcp__optimize_kernel
 Parameters: kernel_name, triton_code, func_desc, device: nvidia
 ```
 
@@ -661,7 +661,7 @@ Best historical speedup: {best_version_speedup}x
 **Step 3C.4: Call MCP to Get Optimized Code**
 
 ```
-MCP tool: mcp__kernelgen-mcp__optimize_triton
+MCP tool: mcp__kernelgen-mcp__optimize_kernel
 Parameters:
 - kernel_name: {op_name}
 - triton_code: Complete code of the current operator file
@@ -774,7 +774,7 @@ Restore Original:
 
 ## MCP Tool Reference
 
-### mcp__kernelgen-mcp__optimize_triton
+### mcp__kernelgen-mcp__optimize_kernel
 
 Optimize Triton kernel code. Can be used for performance optimization or error fixing.
 
