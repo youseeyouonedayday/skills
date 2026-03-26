@@ -43,6 +43,9 @@ This is a **unified entry point** that bundles generation and optimization sub-s
 | `kernelgen-optimize.md` | Optimize existing Triton kernels via MCP iterative optimization (general purpose) |
 | `kernelgen-optimize-for-flaggems.md` | Optimize Triton operators and integrate into **FlagGems** (3 modes: built-in/external/experimental) |
 | `kernelgen-optimize-for-vllm.md` | Optimize Triton operators and integrate into **vLLM** (with CustomOp registration) |
+| **Platform Specialization** | |
+| `kernelgen-specialize.md` | Specialize Triton operators to target platforms (e.g., GPU → Ascend NPU) via MCP `specialize_kernel` |
+| `kernelgen-specialize-for-flaggems.md` | Platform specialization + **FlagGems** integration (4 modes: vendor-ops/vendor-fused/override-builtin/experimental) |
 | **Feedback** | |
 | `kernelgen-submit-feedback.md` | Submit bug reports and feedback via GitHub or email |
 
@@ -109,6 +112,13 @@ Then use the Read tool to read the matched path.
 | vLLM repository detected | Read `kernelgen-optimize-for-vllm.md` and follow it |
 | Neither detected (or unknown) | Read `kernelgen-optimize.md` and follow it |
 
+**Specialization requests** (user wants to migrate/specialize an operator to a different platform, mentions "specialize", "migrate to Ascend/NPU", "platform migration"):
+
+| Detection Result | Action |
+|---|---|
+| FlagGems repository detected | Read `kernelgen-specialize-for-flaggems.md` and follow it |
+| Neither detected (or unknown) | Read `kernelgen-specialize.md` and follow it |
+
 **Feedback requests**:
 
 | Detection Result | Action |
@@ -124,7 +134,9 @@ Then use the Read tool to read the matched path.
 5. If the user explicitly requests a specific sub-skill (e.g., "use the FlagGems version"),
    honor that request regardless of auto-detection results.
 6. **CRITICAL — MCP is mandatory**: ALL operator code generation MUST go through the
-   `mcp__kernelgen-mcp__generate_kernel` MCP tool. NEVER generate Triton kernels, PyTorch
+   `mcp__kernelgen-mcp__generate_kernel` MCP tool. Optimization uses
+   `mcp__kernelgen-mcp__optimize_kernel`, and platform specialization uses
+   `mcp__kernelgen-mcp__specialize_kernel`. NEVER generate Triton kernels, PyTorch
    wrappers, or operator implementations yourself. If MCP is not configured, not reachable,
    or fails after all retries, STOP and report the issue — do NOT fall back to writing code
    manually.
